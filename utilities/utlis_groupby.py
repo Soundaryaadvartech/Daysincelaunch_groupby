@@ -60,11 +60,11 @@ def agg_grp(db, models, business, filter_dict, data_dict, groupby_dict):  # Filt
     
     elif business == "adoreaboo":
         group_by_dic = group_by_dic_adb
-        
+
         t1 = db.query(models.Item.Item_Id, models.Item.Item_Name,models.Item.Item_Type, models.Item.Item_Code,
             models.Item.Sale_Price, models.Item.Sale_Discount, models.Item.Current_Stock, models.Item.Is_Public,
             models.Item.Category, models.Item.Age, models.Item.Bottom, models.Item.Colour, models.Item.Fabric,
-            models.Item.Gender, models.Item.Neck_Closure, models.Item.Neck_Type, models.Item.Occasion,
+            models.Item.Gender, models.Item.Neck_Closure, models.Item.Neck_Type, models.Item.Occassion,
             models.Item.Pack_Size, models.Item.Print_Collections, models.Item.Print_Pattern, models.Item.Print_Size,
             models.Item.Printed_Pattern, models.Item.Sleeve, models.Item.Top, models.Item.Weave_Type, models.Item.age_category,
             models.Item.batch, models.Item.bottom_fabric, models.Item.launch_date, models.Item.print_size, models.Item.product_category,
@@ -145,7 +145,6 @@ def agg_grp(db, models, business, filter_dict, data_dict, groupby_dict):  # Filt
         aggregations = data_dict.get("Aggregation", [])
         col_choose = dimensions + aggregations
         df1 = df[col_choose]  # Store selected columns in df1
-        
     
         return df1
 
@@ -181,14 +180,12 @@ def agg_grp(db, models, business, filter_dict, data_dict, groupby_dict):  # Filt
    
 
     df = filter(db, models,t1, filter_dict, query3, query4)
-    
 
     df1 = Columns_to_Choose(df,data_dict)
     
 
     group_columns = extract_groupby_agg(groupby_dict, df1)
     
-
     agg_dict = agg_col(df1,group_columns)
 
     grouped_df = df1.groupby(group_columns).agg(agg_dict)

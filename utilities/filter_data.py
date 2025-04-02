@@ -52,7 +52,7 @@ def get_filter_data(db: Session, models, business: str):
         t1 = db.query(models.Item.Item_Id, models.Item.Item_Name,models.Item.Item_Type, models.Item.Item_Code,
         models.Item.Sale_Price, models.Item.Sale_Discount, models.Item.Current_Stock, models.Item.Is_Public,
         models.Item.Category, models.Item.Age, models.Item.Bottom, models.Item.Colour, models.Item.Fabric,
-        models.Item.Gender, models.Item.Neck_Closure, models.Item.Neck_Type, models.Item.Occasion,
+        models.Item.Gender, models.Item.Neck_Closure, models.Item.Neck_Type, models.Item.Occassion,
         models.Item.Pack_Size, models.Item.Print_Collections, models.Item.Print_Pattern, models.Item.Print_Size,
         models.Item.Printed_Pattern, models.Item.Sleeve, models.Item.Top, models.Item.Weave_Type, models.Item.age_category,
         models.Item.batch, models.Item.bottom_fabric, models.Item.launch_date, models.Item.print_size, models.Item.product_category,

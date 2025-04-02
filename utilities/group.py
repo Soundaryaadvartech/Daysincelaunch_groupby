@@ -149,7 +149,7 @@ group_by_dic_adb = {
     "Gender": lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),
     "Neck_Closure" : lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),
     "Neck_Type" : lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),
-    "Occasion": lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),
+    "Occassion": lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),
     "Pack_Size": lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),
     "Print_Collections" : lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),
     "Print_Pattern" : lambda x: ', '.join(sorted(set(str(item) for item in x if item is not None))),

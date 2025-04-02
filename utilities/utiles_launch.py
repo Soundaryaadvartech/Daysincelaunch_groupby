@@ -78,7 +78,7 @@ def generate_inventory_summary(db: Session, models, days: int, group_by: str, bu
         t1 = db.query(models.Item.Item_Id, models.Item.Item_Name,models.Item.Item_Type, models.Item.Item_Code,
             models.Item.Sale_Price, models.Item.Sale_Discount, models.Item.Current_Stock, models.Item.Is_Public,
             models.Item.Category, models.Item.Age, models.Item.Bottom, models.Item.Colour, models.Item.Fabric,
-            models.Item.Gender, models.Item.Neck_Closure, models.Item.Neck_Type, models.Item.Occasion,
+            models.Item.Gender, models.Item.Neck_Closure, models.Item.Neck_Type, models.Item.Occassion,
             models.Item.Pack_Size, models.Item.Print_Collections, models.Item.Print_Pattern, models.Item.Print_Size,
             models.Item.Printed_Pattern, models.Item.Sleeve, models.Item.Top, models.Item.Weave_Type, models.Item.age_category,
             models.Item.batch, models.Item.bottom_fabric, models.Item.launch_date, models.Item.print_size, models.Item.product_category,
@@ -104,7 +104,7 @@ def generate_inventory_summary(db: Session, models, days: int, group_by: str, bu
     elif business.lower() == "adoreaboo":
         dt_attrs = [
             "Item_Id", "Item_Name", "Item_Type","Category", "Age","Bottom", "Colour", "Fabric",
-            "Gender", "Neck_Closure","Neck_Type",  "Occasion", "Pack_Size", "Print_Collections", "Print_Pattern",
+            "Gender", "Neck_Closure","Neck_Type",  "Occassion", "Pack_Size", "Print_Collections", "Print_Pattern",
             "Print_Size", "Printed_Pattern", "Sleeve", "Top", "Weave_Type","age_category", "bottom_fabric",
             "print_size", "product_category", "product_type"
         ]

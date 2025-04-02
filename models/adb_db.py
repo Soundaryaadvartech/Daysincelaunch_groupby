@@ -55,7 +55,7 @@ class Sale(Base):
     Average_Quantity = Column(DECIMAL(10, 2), nullable=True)
     Updated_At = Column(TIMESTAMP, nullable=True, server_default=func.current_timestamp(), onupdate=func.current_timestamp())
 
-class ViewsATC(Base):
+class ViewsAtc(Base):
     __tablename__ = "viewsatc"
 
     Date = Column(Date, primary_key=True, nullable=False)
