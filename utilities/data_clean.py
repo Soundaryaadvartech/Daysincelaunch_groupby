@@ -23,7 +23,7 @@ def process_beelittle(t1):
 
     # Helper function to split by commas and handle multi-designs
     def process_style_theme_motif(item, label):
-        items = item.split(", ")  # Split by comma
+        items = item.split(", ") if item else []  # Split by comma
         if len(items) == 2 or len(items) == 1:
             return items  # Keep as list for explode
         else:
@@ -50,11 +50,11 @@ def process_beelittle(t1):
     t1["Print_Key_Motif_2"]=t1['Print_Key_Motif_2'].fillna('None')
     t1=t1.drop(columns=['print_key_motif'])
     
-    t1["Colour"] = t1["Colour"].apply(lambda x: process_style_theme_motif(x, "Colour"))
-    t1['Colour'] = t1['Colour'].apply(lambda x: x if isinstance(x, list) else [x])
-    t1[['Colour_1', 'Colour_2']] = pd.DataFrame(t1['Colour'].tolist(), index=t1.index)
-    t1["Colour_2"]=t1['Colour_2'].fillna('None')
-    t1=t1.drop(columns=['Colour'])
+    t1["Colour"] = t1["Colour"].apply(lambda x: x if isinstance(x, list) else [x])  # Convert string to list
+    t1["Colour"] = t1["Colour"].apply(lambda x: x[:2] if len(x) >= 2 else x + ["None"])  # Ensure two elements
+    t1[['Colour_1', 'Colour_2']] = pd.DataFrame(t1['Colour'].tolist(), index=t1.index)  # Expand into columns
+    t1.drop(columns=['Colour'], inplace=True)  # Drop original column
+
 
     t1["print_colour"] = t1["print_colour"].apply(lambda x: process_style_theme_motif(x, "print_colour"))
     t1['print_colour'] = t1['print_colour'].apply(lambda x: x if isinstance(x, list) else [x])
