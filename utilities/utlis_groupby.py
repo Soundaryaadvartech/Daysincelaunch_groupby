@@ -7,7 +7,7 @@ import json
 from sqlalchemy import func
 from utilities.filter import filter_data
 from utilities.data_clean import process_beelittle,process_prathiksham,process_zing
-from utilities.group import group_by_bee,group_by_dic_prathisham,group_by_dic_zing
+from utilities.group import group_by_bee,group_by_dic_prathisham,group_by_dic_zing, group_by_dic_adb
 
 
 
@@ -57,6 +57,20 @@ def agg_grp(db, models, business, filter_dict, data_dict, groupby_dict):  # Filt
         rows = [row._asdict() for row in t1]
         t1 = pd.DataFrame(rows)
         t1 = process_zing(t1)
+    
+    elif business == "adoreaboo":
+        group_by_dic = group_by_dic_adb
+        
+        t1 = db.query(models.Item.Item_Id, models.Item.Item_Name,models.Item.Item_Type, models.Item.Item_Code,
+            models.Item.Sale_Price, models.Item.Sale_Discount, models.Item.Current_Stock, models.Item.Is_Public,
+            models.Item.Category, models.Item.Age, models.Item.Bottom, models.Item.Colour, models.Item.Fabric,
+            models.Item.Gender, models.Item.Neck_Closure, models.Item.Neck_Type, models.Item.Occasion,
+            models.Item.Pack_Size, models.Item.Print_Collections, models.Item.Print_Pattern, models.Item.Print_Size,
+            models.Item.Printed_Pattern, models.Item.Sleeve, models.Item.Top, models.Item.Weave_Type, models.Item.age_category,
+            models.Item.batch, models.Item.bottom_fabric, models.Item.launch_date, models.Item.print_size, models.Item.product_category,
+            models.Item.product_type).all()
+        rows = [row._asdict() for row in t1]
+        t1 = pd.DataFrame(rows)
 
 
     else:

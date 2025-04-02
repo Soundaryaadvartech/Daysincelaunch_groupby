@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sqlalchemy.orm import Session
-from utilities.group import group_by_bee,group_by_dic_prathisham,group_by_dic_zing
+from utilities.group import group_by_bee,group_by_dic_prathisham,group_by_dic_zing, group_by_dic_adb
 
 
 def get_column_names(db: Session, models, business: str):
@@ -11,6 +11,8 @@ def get_column_names(db: Session, models, business: str):
         groupby = group_by_dic_prathisham
     elif business == "zing":
         groupby = group_by_dic_zing
+    elif business == "adoreaboo":
+        groupby = group_by_dic_adb
     else:
         print("Business name is wrong")
 

@@ -17,7 +17,8 @@ DB_HOST = os.getenv("DB_HOST")
 DATABASES = {
     "ZNG45F8J27LKMNQ": f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/zing",
     "PRT9X2C6YBMLV0F": f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/prathiksham",
-    "BEE7W5ND34XQZRM": f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/beelittle"
+    "BEE7W5ND34XQZRM": f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/beelittle",
+    "ADBXOUERJVK038L": f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/adoreaboo",
 }
 
 # Maintain separate session makers for each DB
@@ -40,7 +41,8 @@ def get_db(business: str):
 BUSINESS_CODE_MAP = {
     "ZNG45F8J27LKMNQ": "zing",
     "PRT9X2C6YBMLV0F": "prathiksham",
-    "BEE7W5ND34XQZRM": "beelittle"
+    "BEE7W5ND34XQZRM": "beelittle",
+    "ADBXOUERJVK038L" : "adoreaboo"
 }
 
 def get_business_name(business_code: str) -> str:
