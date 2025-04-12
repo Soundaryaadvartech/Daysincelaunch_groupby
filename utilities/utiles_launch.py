@@ -88,12 +88,11 @@ def generate_inventory_summary(db: Session, models, days: int, group_by: str, bu
         t1 = filter_data_launch(t1, filter_jason)
         t1 = t1[["Item_Id", "Item_Name", "Item_Type", "Item_Code", "Category", 
                   "Current_Stock", "launch_date", "Sale_Price", "Sale_Discount", "batch"]]
-        
-
-
+        t1["launch_date"] = pd.to_datetime(t1["launch_date"])
     else:
         return "Invalid business name"
     
+
     # Only fetch needed attributes for dt dataframe
     if business.lower() == "prathiksham":
         dt_attrs = ["Item_Id", "Item_Name", "Item_Type", "Category", 
@@ -143,7 +142,7 @@ def generate_inventory_summary(db: Session, models, days: int, group_by: str, bu
     t3["Item_Id"] = t3["Item_Id"].astype(int)
     t5["Item_Id"] = t5["Item_Id"].astype(int)
     t5["Last_Sold_Date"] = pd.to_datetime(t5["Last_Sold_Date"])
-    
+    t2["Total_Value"] = t2["Total_Value"].astype(float)
     # Merge first sold date
     t1 = pd.merge(t1, t4, how="left", on="Item_Id")
     t1["launch_date"] = t1["launch_date"].fillna(t1["First_Sold_Date"])
@@ -162,6 +161,7 @@ def generate_inventory_summary(db: Session, models, days: int, group_by: str, bu
         # For item_name grouping, add the grouping columns first
         t2_with_groups = pd.merge(t2, t1[['Item_Id'] + grp].drop_duplicates(), on='Item_Id', how='left')
         t3_with_groups = pd.merge(t3, t1[['Item_Id'] + grp].drop_duplicates(), on='Item_Id', how='left')
+        print(t2_with_groups[t2_with_groups.Item_Id==1077])
         
         temp_t2 = t2_with_groups.groupby(grp).agg({"Quantity": "sum"}).rename(columns={"Quantity": "Alltime_Total_Quantity"}).reset_index()
         t3_total = t3_with_groups.groupby(grp).agg({
@@ -177,49 +177,70 @@ def generate_inventory_summary(db: Session, models, days: int, group_by: str, bu
     
     # Optimized item summary function
     def get_item_summary(t1, t2, t3, start_offset, end_offset):
-        # Calculate date range for each item
+        print(start_offset,end_offset)
+        
         t1['Start_Date'] = t1['launch_date'] + pd.to_timedelta(start_offset, unit='D')
+        
+        
         t1['End_Date'] = t1['launch_date'] + pd.to_timedelta(end_offset, unit='D')
         t1['Period_Days'] = end_offset - start_offset
         
-        get_lst = grp + ['Start_Date', 'End_Date']
+        get_lst = grp + ['Start_Date', 'End_Date','Item_Id']
         
-        # For item_name grouping, create group columns in t2 and t3 if not already done
-        if group_by.lower() == "item_name" and 'Item_Name' not in t2.columns:
-            # Add the grouping columns to t2 and t3 (if they haven't been added above)
-            grp_mapping = t1[['Item_Id'] + grp].drop_duplicates()
-            t2 = pd.merge(t2, grp_mapping, on='Item_Id', how='left')
-            t3 = pd.merge(t3, grp_mapping, on='Item_Id', how='left')
+    
         
         # Filter data based on date range
         join_cols = 'Item_Id' if group_by.lower() == "item_id" else grp
         
-        # Use vectorized operations for filtering
-        t2_merge = pd.merge(t2, t1[get_lst], on=join_cols, how='inner')
-        t3_merge = pd.merge(t3, t1[get_lst], on=join_cols, how='inner')
+        # Use vectorized operations for 
+        print("1",t1.info())
+        t2_merge = pd.merge(t2, t1[['Start_Date', 'End_Date','Item_Id']], on="Item_Id", how='inner')
+        t3_merge = pd.merge(t3, t1[['Start_Date', 'End_Date','Item_Id']], on="Item_Id", how='inner')
         
-        t2_filtered = t2_merge[(t2_merge['Date'] >= t2_merge['Start_Date']) & (t2_merge['Date'] <= t2_merge['End_Date'])]
-        t3_filtered = t3_merge[(t3_merge['Date'] >= t3_merge['Start_Date']) & (t3_merge['Date'] <= t3_merge['End_Date'])]
         
-        # Aggregate data by grouping columns - use optimized agg with dict
+        
+        t2_filtered = t2_merge[(t2_merge['Date'] >= t2_merge['Start_Date']) & (t2_merge['Date'] < t2_merge['End_Date'])]
+        t3_filtered = t3_merge[(t3_merge['Date'] >= t3_merge['Start_Date']) & (t3_merge['Date'] < t3_merge['End_Date'])]
+        
+        
+
+        t2_agg = t2_filtered.groupby("Item_Id", as_index=False)[['Quantity', 'Total_Value']].sum()
+        
+        t3_agg = t3_filtered.groupby("Item_Id", as_index=False)[['Items_Viewed', 'Items_Addedtocart']].sum()
+        
+        
+        
+        period_df = pd.merge(t2_agg[["Item_Id","Quantity","Total_Value"]], t3_agg[["Item_Id","Items_Viewed","Items_Addedtocart"]], on="Item_Id", how='outer')
+
         agg_dict = {
-            'Item_Id': 'first' if group_by.lower() == "item_name" else 'first',
+            'Item_Id': 'first',
             'Item_Code': 'first',
             'Current_Stock': 'sum',
             'launch_date': 'min',
             'Period_Days': 'first',
             'Sale_Price': 'mean',
             'Sale_Discount': 'mean',
+            'Quantity': 'sum',
+            'Total_Value': 'sum',
+            "Items_Viewed": 'sum',
+            "Items_Addedtocart": 'sum'
     
         }
+
+
         
-        t1_agg = t1.groupby(grp, as_index=False).agg(agg_dict)
-        t2_agg = t2_filtered.groupby(grp, as_index=False)[['Quantity', 'Total_Value']].sum()
-        t3_agg = t3_filtered.groupby(grp, as_index=False)[['Items_Viewed', 'Items_Addedtocart']].sum()
-        
-        # Merge using one operation when possible
-        period_df = pd.merge(t1_agg, t2_agg, on=join_cols, how='left')
-        period_df = pd.merge(period_df, t3_agg, on=join_cols, how='left')
+
+        if group_by.lower() == "item_id":
+            period_df = pd.merge(t1, period_df, on="Item_Id", how='left')
+            period_df = period_df.drop(columns = ["Item_Name","Item_Type",colu])
+        else:
+            period_df = pd.merge(t1, period_df, on="Item_Id", how='left')
+
+            period_df = period_df.groupby(grp, as_index=False).agg(agg_dict)
+
+
+
+
         
         # Fill NA values all at once
         period_df = period_df.fillna(0)

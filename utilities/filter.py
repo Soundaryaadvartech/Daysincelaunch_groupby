@@ -43,6 +43,12 @@ def filter_data(db,models,t1, filter_dict,query3,query4):
         query3 = query3.filter(where_condition)
         query3 = query3.group_by(models.Sale.Item_Id)
 
+        where_condition = (
+            models.ViewsAtc.Date.between(start_date, end_date) 
+            if hasattr(models.ViewsAtc, 'Date') 
+            else None
+        )
+
         # Modify the query4 for date filter in Viewsatc table
         query4 = db.query(
             models.ViewsAtc.Item_Id,

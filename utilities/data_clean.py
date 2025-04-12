@@ -126,6 +126,8 @@ def process_zing(t1):
         'Sleeveless': 'Sleeveless'
     }
     t1["Sleeve"] = t1["Sleeve"].replace(sleeve_dict)
+    t1["Category"] = t1["Category"].replace({"Co-ord,Kurta Set":"Kurta Set,Co-ord"})
     
     return t1
+
 
